@@ -280,7 +280,8 @@ const styles = StyleSheet.create({
   mainconatiner:
   {
     flex : 1,
-    marginVertical : 60,
+    //For IOS 
+    // marginVertical : 60, 
   },
   AppBar:{
     textAlign:'left',

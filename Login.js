@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, View , TextInput , TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View , TextInput , TouchableOpacity  } from 'react-native'
 import React, { useState } from 'react'
 import { getAuth ,signInWithEmailAndPassword , signInWithPopup , GoogleAuthProvider } from "firebase/auth";
 import { app } from './config';
@@ -27,7 +27,10 @@ const Login = ({navigation}) => {
     signInWithEmailAndPassword(auth, email, password)
   .then(() => {
     navigation.replace("Home")
-  })
+    if (email === 'mbasit467@gmail.com' && password === 'malik123') {
+      navigation.navigate('Admin');
+  }
+})
   .catch((error) => {
     const errorMessage = error.message;
     alert(errorMessage)
