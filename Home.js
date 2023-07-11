@@ -6,27 +6,59 @@ import { Stack, Button, IconButton,Avatar } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Category from './Shoes'
 import { FontAwesome5 } from '@expo/vector-icons';
-
-
-
-const { height, width } = Dimensions.get('window')
-
-
+import { ActivityIndicator } from 'react-native-paper';
+const { height, width } = Dimensions.get('window');
+import { collection,getDocs} from "firebase/firestore";
+import { db } from "./config";
 
 export default function Home() {
+
+  const [shoes, setShoes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const [active1,setActive1]=useState(false);
   const [active2,setActive2]=useState(true);
   const [active3,setActive3]=useState(true);
   const [active4,setActive4]=useState(true);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const [showMore,setShowMore]=useState(false);
 
 
+  useEffect(()=>{
+    const fetchShoes = async () => {
+      try
+      {
+        const querySnapshot = await getDocs(collection(db, "Sneakers"));
+        const data = querySnapshot.docs.map((doc) =>
+        {
+          const shoeData = doc.data(); 
+          const imageUrl = shoeData.url;
+          return { ...shoeData, imageUri: imageUrl };
+        }  
+      );
+      setShoes(data);
+      setLoading(false)
+      }
+      catch(error)
+      {
+        console.log(error);
+      }
+    };
+    fetchShoes();
+
+  },[]);
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
 
 const handlepress=(id)=>{
   if (id==1) {
@@ -60,6 +92,9 @@ const handlepress=(id)=>{
   }
 };
 
+const addToCart = (item) => {
+  setSelectedItems((prevItems) => [...prevItems, item]);
+};
 
   const show=()=>{
 
@@ -148,72 +183,31 @@ const handlepress=(id)=>{
                             
                                 </View>
                 
-                            {showMore ? <View style={{ height: 460, marginTop: 5,flexDirection:'row'}}>
-                                <ScrollView 
-                               
-                                ><View style={{flexDirection:'row',width:width,flexWrap:'wrap',justifyContent:'space-evenly'}}>
-
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                     />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeJordan.png')}
-                                        name="Nike Jordan" price="300$"
-                                    />
-                                   <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeJordan.png')}
-                                        name="Nike Jordan" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                     <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                     <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                     <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                     <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                     <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                </View>
-                                </ScrollView>
-                            </View>
-                            
-                            :
-                            <View style={{ height: 190, marginTop: 5 }}>
-                                <ScrollView
-                                    horizontal={true}
-                                    showsHorizontalScrollIndicator={false}
-                                >
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeJordan.png')}
-                                        name="Nike Jordan" price="300$"
-                                    />
-                                   <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeJordan.png')}
-                                        name="Nike Jordan" price="300$"
-                                    />
-                                    <Category imageUri={require('../Sneakers/assets/images/NikeAirMax.png')}
-                                        name="Nike AirMax" price="300$"
-                                    />
-                                </ScrollView>
-                            </View>
-                            }
+                                {showMore ? (
+          <View style={styles.itemContainer}>
+            {shoes.map((shoe, index) => (
+              <Category
+                key={index}
+                imageUri={shoe.imageUri}
+                name={shoe.name}
+                price={shoe.price}
+                addToCart={() => addToCart(item)}
+              />
+            ))}
+          </View>
+        ) : (
+          <View style={styles.itemContainer}>
+            {shoes.slice(0, 5).map((shoe, index) => (
+              <Category
+                key={index}
+                imageUri={shoe.imageUri}
+                name={shoe.name}
+                price={shoe.price}
+                addToCart={() => addToCart(item)}
+              />
+            ))}
+          </View>
+        )}
                             
                         </View>
                         
@@ -280,8 +274,7 @@ const styles = StyleSheet.create({
   mainconatiner:
   {
     flex : 1,
-    //For IOS 
-    // marginVertical : 60, 
+    marginVertical : 60,
   },
   AppBar:{
     textAlign:'left',
@@ -424,27 +417,20 @@ summerSaleTypo: {
   fontWeight: "500", 
   textAlign: "left",
 },
+sectionTitle: {
+  fontSize: 18,
+  fontWeight: "500",
+  padding: 20,
+},
+seeAllText: {
+  color: "blue",
+  fontWeight: "bold",
+  padding: 20,
+},
+itemContainer: {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  justifyContent: "space-evenly",
+},
   
 });
-
-
-
-
-
-
-
-
-
-
-
-{/* <IconButton icon={props => <Icon name="menu" onPress={(openDrawer)=>{navigation.openDrawer()}} {...props}  />}/>     */}
-
-{/* <AppBar
-style={styles.bottom}
-title="Explore"
-    titleStyle={styles.title}
-    variant='bottom'
-    centerTitle={true}
-    <IconButton icon={props => <Icon name="menu" onPress={(openDrawer)=>{navigation.openDrawer()}} {...props}  />} {...props} /> 
->>>>>>> 976fde6e4477b301f6b2bb864d9edbbc84792e08
-    /> */}

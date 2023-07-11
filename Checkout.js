@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TextInput, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 
+const Checkout = ({navigation , route}) => {
 
-const Checkout = ({navigation}) => {
-
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Nike Club Max', price: 123.2,image: "https://nyc3.digitaloceanspaces.com/sizze-storage/media/images/axOzNeuY25VbfDTvFmiNR8hL.png" },
-    { id: 2, name: 'Nike Jordan', price: 138.3, image: "https://nyc3.digitaloceanspaces.com/sizze-storage/media/images/axOzNeuY25VbfDTvFmiNR8hL.png" },
-    { id: 3, name: 'Nike AirPro', price: 199.99, image: "https://nyc3.digitaloceanspaces.com/sizze-storage/media/images/axOzNeuY25VbfDTvFmiNR8hL.png" },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+ 
+  useEffect(() => {
+    const { item } = route.params;
+    setCartItems([item]);
+  }, []);
 
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
-      <Card.Cover source={{ uri: item.image }} style={styles.itemImage} />
+      <Card.Cover source={{ uri: item.imageUri }} style={styles.itemImage} />
       <Card.Content>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>${item.price}</Text>
@@ -45,7 +45,8 @@ const Checkout = ({navigation}) => {
       <FlatList
         data={cartItems}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item?.id?.toString()}
+
       />
 
       <View style={styles.totalContainer}>
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   itemImage: {
-    height: 120, 
+    height: 200, 
   },
   itemName: {
     fontSize: 20,
