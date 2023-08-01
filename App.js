@@ -13,7 +13,7 @@ import Checkout from './Checkout';
 import PlaceOrder from './PlaceOrder';
 import Cart from './Cart';
 import Admin from './Admin';
-
+import Details from './Details'
 const App = () => {
   const Stack = createStackNavigator();
   return (
@@ -31,6 +31,7 @@ const App = () => {
       <Stack.Screen name="PlaceOrder" component={PlaceOrder} />
       <Stack.Screen name="Cart" component={Cart} />
       <Stack.Screen name="Admin" component={Admin} />
+      <Stack.Screen name="Details" component={Details} />
     </Stack.Navigator>
   </NavigationContainer>
     

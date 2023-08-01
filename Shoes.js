@@ -12,6 +12,7 @@ export default function Category(props) {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
+      
       <View style={styles.imageContainer}>
         <Image
           source={{uri: props.imageUri}}

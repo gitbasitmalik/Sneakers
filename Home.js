@@ -55,7 +55,8 @@ export default function Home() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size="large" color="blue"   />
+        <Text >Loading...</Text>
       </View>
     );
   }
@@ -130,7 +131,7 @@ const addToCart = (item) => {
                             shadowColor: 'black',
                             shadowOpacity: 0.2,
                             elevation: 1,
-                            marginTop: Platform.OS == 'android' ? 30 : null
+                            marginTop: Platform.OS == 'android' ? 30 : 30
                             
                         }}>
                             <Icon name="search-web" size={20} style={{ marginRight: 10 }} />
@@ -183,8 +184,10 @@ const addToCart = (item) => {
                             
                                 </View>
                 
-                                {showMore ? (
-          <View style={styles.itemContainer}>
+                                {showMore ? 
+            <ScrollView 
+            >
+          <View  style = {styles.itemList}>
             {shoes.map((shoe, index) => (
               <Category
                 key={index}
@@ -195,9 +198,14 @@ const addToCart = (item) => {
               />
             ))}
           </View>
-        ) : (
-          <View style={styles.itemContainer}>
-            {shoes.slice(0, 5).map((shoe, index) => (
+            </ScrollView>
+         : 
+          <View >
+           <ScrollView
+           horizontal = {true}
+           showsHorizontalScrollIndicator = {false}
+           >
+           {shoes.map((shoe, index) => (
               <Category
                 key={index}
                 imageUri={shoe.imageUri}
@@ -206,8 +214,9 @@ const addToCart = (item) => {
                 addToCart={() => addToCart(item)}
               />
             ))}
+           </ScrollView>
           </View>
-        )}
+        }
                             
                         </View>
                         
@@ -266,15 +275,17 @@ const addToCart = (item) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+    
     
   },
   mainconatiner:
   {
     flex : 1,
-    marginVertical : 60,
+    marginVertical : 20,
+    overflow : "hidden"
   },
   AppBar:{
     textAlign:'left',
@@ -303,9 +314,9 @@ const styles = StyleSheet.create({
   
   bottom:{
     position: 'absolute',
-    //  bottom: 0,
-    width: '100%',
-  top:710,
+     bottom: 0,
+    // width: '100%',
+   
   
 
 },
@@ -369,7 +380,7 @@ const styles = StyleSheet.create({
     margin: 5,
     position: "absolute",
     top: 1,
-    right:160,
+    right:170,
     width: 60,
     color:'white',
    backgroundColor:'blue',
@@ -429,8 +440,16 @@ seeAllText: {
 },
 itemContainer: {
   flexDirection: "row",
-  flexWrap: "wrap",
-  justifyContent: "space-evenly",
+  // flexWrap: "wrap",
+  height:"auto",
+  justifyContent: "space-between",
 },
+itemList:
+{
+  display : "flex",
+  flexDirection : "row",
+  flexWrap: "wrap",
+  justifyContent : "space-evenly"
+}
   
 });
